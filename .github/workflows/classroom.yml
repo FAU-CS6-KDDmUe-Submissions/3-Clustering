@@ -1,0 +1,48 @@
+name: Autograding Tests
+on:
+  - push
+  - workflow_dispatch
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Grading of the K-Means Implementation (Task 1)
+      id: kmeans
+      uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
+      with:
+        timeout: '15'
+        max-score: '14'
+        setup-command: 'pip install -r requirements.txt'
+        test-path: 'tests/kmeans/'
+    - name: Grading of the Implementation of _get_neighborhood() in DBSCAN (Task 2.1)
+      id: dbscangetneighborhood
+      uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
+      with:
+        timeout: '15'
+        max-score: '2'
+        setup-command: 'pip install -r requirements.txt'
+        test-path: 'tests/dbscan/test_get_neighborhood.py'
+    - name: Grading of the Implementation of fit() in DBSCAN (Task 2.2)
+      id: dbscanfit
+      uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
+      with:
+        timeout: '15'
+        max-score: '14'
+        setup-command: 'pip install -r requirements.txt'
+        test-path: 'tests/dbscan/test_fit.py'
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        KMEANS_RESULTS: "${{steps.kmeans.outputs.result}}"
+        DBSCANGETNEIGHBORHOOD_RESULTS: "${{steps.dbscangetneighborhood.outputs.result}}"
+        DBSCANFIT_RESULTS: "${{steps.dbscanfit.outputs.result}}"
+      with:
+        runners: kmeans, dbscangetneighborhood, dbscanfit
