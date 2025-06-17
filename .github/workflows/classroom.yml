@@ -14,15 +14,40 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: Grading of the K-Means Implementation (Task 1)
-      id: kmeans
+    - name: Grading of Task 1.1. - (kmeans) _initialize_partitions
+      id: kmeansinitializepartitions
       uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
       with:
         timeout: '15'
-        max-score: '14'
+        max-score: '3'
         setup-command: 'pip install -r requirements.txt'
-        test-path: 'tests/kmeans/'
-    - name: Grading of the Implementation of _get_neighborhood() in DBSCAN (Task 2.1)
+        test-path: 'tests/kmeans/test_initialize_partitions.py'
+    - name: Grading of Task 1.2. - (kmeans) _update_centroids
+      id: kmeansupdatecentroids
+      uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
+      with:
+        timeout: '15'
+        max-score: '3'
+        setup-command: 'pip install -r requirements.txt'
+        test-path: 'tests/kmeans/test_update_centroids.py'
+    - name: Grading of Task 1.3. - (kmeans) _reassign_points
+      id: kmeansreassignpoints
+      uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
+      with:
+        timeout: '15'
+        max-score: '5'
+        setup-command: 'pip install -r requirements.txt'
+        test-path: 'tests/kmeans/test_reassign_points.py'
+    - name: Grading of Task 1.4. - (kmeans) fit
+      id: kmeansfit
+      uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
+      with:
+        timeout: '15'
+        max-score: '3'
+        setup-command: 'pip install -r requirements.txt'
+        test-path: 'tests/kmeans/test_fit.py'
+
+    - name: Grading of Task 2.1. - (dbscan) _get_neighborhood
       id: dbscangetneighborhood
       uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
       with:
@@ -30,7 +55,7 @@ jobs:
         max-score: '2'
         setup-command: 'pip install -r requirements.txt'
         test-path: 'tests/dbscan/test_get_neighborhood.py'
-    - name: Grading of the Implementation of fit() in DBSCAN (Task 2.2)
+    - name: Grading of Task 2.2. - (dbscan) fit
       id: dbscanfit
       uses: FAU-CS6-KDDmUe-Submissions/Custom-Python-Autograder@v1
       with:
@@ -38,11 +63,15 @@ jobs:
         max-score: '14'
         setup-command: 'pip install -r requirements.txt'
         test-path: 'tests/dbscan/test_fit.py'
+
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
-        KMEANS_RESULTS: "${{steps.kmeans.outputs.result}}"
-        DBSCANGETNEIGHBORHOOD_RESULTS: "${{steps.dbscangetneighborhood.outputs.result}}"
-        DBSCANFIT_RESULTS: "${{steps.dbscanfit.outputs.result}}"
+        KMEANSINITIALIZEPARTITIONS_RESULTS: ${{ steps.kmeansinitializepartitions.outputs.result }}
+        KMEANSUPDATECENTROIDS_RESULTS: ${{ steps.kmeansupdatecentroids.outputs.result }}
+        KMEANSREASSIGNPOINTS_RESULTS: ${{ steps.kmeansreassignpoints.outputs.result }}
+        KMEANSFIT_RESULTS: ${{ steps.kmeansfit.outputs.result }}
+        DBSCANGETNEIGHBORHOOD_RESULTS: ${{ steps.dbscangetneighborhood.outputs.result }}
+        DBSCANFIT_RESULTS: ${{ steps.dbscanfit.outputs.result }}
       with:
-        runners: kmeans, dbscangetneighborhood, dbscanfit
+        runners: kmeansinitializepartitions,kmeansupdatecentroids,kmeansreassignpoints,kmeansfit,dbscangetneighborhood,dbscanfit
